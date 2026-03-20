@@ -1,0 +1,1 @@
+{"root":["./src/env.d.ts","./src/api/inventory.ts","./src/hooks/useInventory.ts","./src/types/inventory.ts","./src/App.tsx","./src/main.tsx","./src/components/AddItemForm.tsx","./src/components/AdjustQuantityModal.tsx","./src/components/InventoryTable.tsx","./src/components/RemoveItemModal.tsx","./src/components/SortControls.tsx"],"version":"5.9.3"}

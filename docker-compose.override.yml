@@ -1,0 +1,36 @@
+services:
+  backend:
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    volumes:
+      - ./backend:/code
+    environment:
+      DATABASE_URL: postgresql://inventory:${POSTGRES_PASSWORD:-inventory}@postgres:5432/inventory
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672//
+      DEBUG: "true"
+
+  celery-worker:
+    volumes:
+      - ./backend:/code
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    command: sh -c "rm -rf node_modules/.vite && npm run dev"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    profiles: []
+
+  nginx:
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
